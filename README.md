@@ -7,7 +7,7 @@
 
 ## Document Exploitation Plugins for ImageJ
 
-# Common image processing tasks for document exploitation
+# Image processing tasks for document exploitation
 
 * Page Alignment
 * Lighting Correction
