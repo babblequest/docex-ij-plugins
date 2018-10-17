@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+        <parent>
+		<groupId>org.scijava</groupId>
+		<artifactId>pom-scijava</artifactId>
+		<version>14.0.0</version>
+		<relativePath />
+	</parent> 
+
+	<groupId>docex</groupId>
+	<artifactId>DOCEX_Plugins</artifactId>
+	<version>v1.0</version>
+
+	<name>ImageJ plugins for forensic document examination</name>
+	<description>Document Exploitation Toolkit (Paper Documents).</description>
+	<url>https://github.com/docex/docex-ij-plugins</url>
+	<inceptionYear>2012</inceptionYear>
+
+       <organization>
+		<name>BabbleQuest</name>
+		<url>http://babblequest.org/</url>
+	</organization>
+
+        <contributors>
+          <contributor>
+			<name>Steven Parker</name>
+			<url>http://imagej.net/User:Schindelin</url>
+			<roles><role>founder</role></roles>
+			<properties><id>sbparke</id></properties>
+		</contributor>
+        </contributors>
+
+        <mailingLists>
+           <mailingList>
+               <name>FDE Forum</name>
+	       <archive>https://babblequest.org/forum/</archive>
+	   </mailingList>
+	</mailingLists>
+
+        <scm>
+		<connection>scm:git:git://github.com/babblquest/NLP</connection>
+		<tag>HEAD</tag>
+		<url>https://github.com/</url>
+	</scm>
+
+        <issueManagement>
+		<system>GitHub Issues</system>
+		<url>https://github.com/babblquest/NLP/issues</url>
+	</issueManagement>
+
+	<licenses>
+		<license>
+			<name>GNU Lesser General Public License v3+</name>
+			<url>http://www.gnu.org/licenses/lgpl.html</url>
+			<distribution>repo</distribution>
+		</license>
+                
+	</licenses>
+
+	<developers>
+		<developer>
+			<id></id>
+			<name>Steven Parker</name>
+			<url>https://imagej.net/User:sbparke</url>
+			<roles>
+				<!-- See https://imagej.net/Team -->
+				<role>founder</role>
+				<role>developer</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<ciManagement>
+		<system>N/A</system>
+	</ciManagement>
+
+	<properties>
+		<package-name>babblequest.docex</package-name>
+		<license.licenseName>lgpl_v3</license.licenseName>
+		<license.copyrightOwners>BabbleQuest</license.copyrightOwners>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>net.imagej</groupId>
+			<artifactId>ij</artifactId>
+		</dependency>
+                <dependency>
+                    <groupId>org.apache.mahout</groupId>
+                    <artifactId>mahout-math</artifactId>
+                    <version>0.13.0</version>
+                </dependency>
+	</dependencies>
+
+</project>
