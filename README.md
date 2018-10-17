@@ -13,7 +13,7 @@ Page Alignment
 Lighting Correction
 Image Segmentation 
 
-All other code is freely availabile under the GNU General Public License.
+All code is freely availabile under the GNU General Public License.
 
-For more information email Steven Parker (parker@babblequest.com)
+For more information email Steven Parker (parker@babblequest.org)
 
