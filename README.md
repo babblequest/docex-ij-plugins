@@ -10,9 +10,7 @@
 # Typical image processing needed if you photographed documents in the field with your cell phone or digital camera.
 
 * Page Alignment
-
 * Lighting Correction
-
 * Image Segmentation 
 
 All code is freely availabile under the GNU General Public License.
