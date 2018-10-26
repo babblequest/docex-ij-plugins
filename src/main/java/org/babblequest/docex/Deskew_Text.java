@@ -1,17 +1,14 @@
 package org.babblequest.docex;
 
-import ij.*;
-import ij.plugin.filter.PlugInFilter;
-import ij.gui.GenericDialog;
-import ij.gui.DialogListener;
-import ij.process.*;
-import ij.plugin.filter.GaussianBlur;
-import ij.measure.Calibration;
-import ij.gui.Roi;
-import java.util.Vector;
-import java.awt.*;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 
-import java.awt.image.*;
+import ij.IJ;
+import ij.ImagePlus;
+import ij.plugin.filter.PlugInFilter;
+import ij.process.ImageProcessor;
 
 /**********************************************
   Text image deskew using code derived from an abandoned Gimp autodeskew plugin - i

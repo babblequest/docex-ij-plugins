@@ -1,19 +1,9 @@
 package org.babblequest.docex;
 
-import java.io.*;
-import java.util.*;
-import ij.*;
+import ij.IJ;
+import ij.ImagePlus;
 import ij.plugin.filter.PlugInFilter;
-import ij.gui.GenericDialog;
-import ij.gui.DialogListener;
-import ij.process.*;
-import ij.plugin.filter.GaussianBlur;
-import ij.measure.Calibration;
-import ij.gui.Roi;
-import java.util.Vector;
-import java.awt.*;
-
-import java.awt.image.*;
+import ij.process.ImageProcessor;
 
 /*				sbseg.c  by Tom Goldstein
  *   This code performs isotropic segmentation using the "Split Bregman" algorithm.

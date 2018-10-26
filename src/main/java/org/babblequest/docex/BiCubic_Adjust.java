@@ -1,24 +1,16 @@
 package org.babblequest.docex;
 
-import ij.*;
+import java.util.ArrayList;
+
+import org.apache.mahout.math.DenseMatrix;
+import org.apache.mahout.math.Matrix;
+import org.apache.mahout.math.SingularValueDecomposition;
+
+import ij.IJ;
+import ij.ImagePlus;
 import ij.plugin.filter.PlugInFilter;
-import ij.gui.GenericDialog;
-import ij.gui.DialogListener;
-import ij.process.*;
-import ij.plugin.filter.GaussianBlur;
-import ij.measure.Calibration;
-import ij.gui.Roi;
-import java.util.Vector;
-import java.util.*;
-import java.awt.*;
+import ij.process.ImageProcessor;
 
-import java.awt.image.*;
-
-import org.apache.mahout.math.*;
-//import cern.colt.matrix.*;
-//import cern.colt.matrix.impl.*;
-
-//import edu.umbc.cs.maple.utils.*;
 
 /***********************************************
    Lighting adjustment for text image taken from a camera.
