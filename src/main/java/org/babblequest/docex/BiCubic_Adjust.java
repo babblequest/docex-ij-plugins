@@ -25,7 +25,7 @@ import org.apache.mahout.math.DenseMatrix;
 import org.apache.mahout.math.Matrix;
 import org.apache.mahout.math.SingularValueDecomposition;
 
-/**
+/***
  * Plugin class for Lighting adjustment of text image taken from a camera. 
  * Correction of flash or mounted lighting that is not perpendicular (off axis) to a flat document.
  * 
@@ -345,7 +345,7 @@ public class BiCubic_Adjust implements PlugInFilter {
           newPix = 255;
         }
 
-        /**
+        /***
          * if ((pix < mean) && (pix-mean >= 0)) newPix = pix-min;
          * 
          * if ((pix > mean) && (pix+max <= 255)) newPix = pix+max;
