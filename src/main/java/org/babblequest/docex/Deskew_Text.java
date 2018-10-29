@@ -35,7 +35,7 @@ import java.awt.image.DataBuffer;
  * Text image deskew using code derived from an abandoned Gimp autodeskew plugin - i it uses GPL
  * version of the Radon transform. You may find the original auther here for the initial java port.
  * https://gist.github.com/witwall/5565179
- **********************************************/
+ ************************************************/
 
 public class Deskew_Text implements PlugInFilter {
   private int flags = DOES_ALL | CONVERT_TO_FLOAT;
