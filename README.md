@@ -1,5 +1,7 @@
 # docex-ij2-plugins
 
+# This code is not in production yet. Please stop by later.
+
 ## Document Exploitation Plugins for ImageJ
 
 # Image processing tasks for document exploitation
