@@ -21,17 +21,22 @@ import ij.ImagePlus;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 import java.util.ArrayList;
+import java.lang.Math;
 import org.apache.mahout.math.DenseMatrix;
 import org.apache.mahout.math.Matrix;
 import org.apache.mahout.math.SingularValueDecomposition;
 
-/***
+/**
  * Plugin class for Lighting adjustment of text image taken from a camera. 
  * Correction of flash or mounted lighting that is not perpendicular (off axis) to a flat document.
  * 
- * Enhancement just do bight colors and dark colors separately. As the white balance will effect the
- * fonts as well. Perhaps take auto threshold calculation as cutoff. See autothreshold plugin
- ************************************************/
+ * This will not correct photographs of pocket trash or wrinkled documents glasswork only.
+ * 
+ * Discribed in:
+ *      Image Processing Handbook by John Russ 2002 pg. 47
+ *      http://www.geo.uzh.ch/microsite/rsl-documents/research/SARlab/GMTILiterature/PDF/1142_CH03.pdf
+ * 
+ */
 
 // CHECKSTYLE:OFF
 public class BiCubic_Adjust implements PlugInFilter {
@@ -39,7 +44,7 @@ public class BiCubic_Adjust implements PlugInFilter {
 
 
   /** Supported imagej image types. */
-  private int flags = DOES_ALL;
+  private int flags = DOES_16 | DOES_8G;
 
   /** Image pixels. */
   protected int[][] pixels;
@@ -51,7 +56,7 @@ public class BiCubic_Adjust implements PlugInFilter {
   int height;
 
   /** Image samples. */
-  double sample = 300.0;
+  final double window = 80.0;
 
   /**
    * The Class Point.
@@ -134,28 +139,7 @@ public class BiCubic_Adjust implements PlugInFilter {
   }
 
   /**
-   * Pow.
-   *
-   * @param x the x
-   * @param pow the pow
-   * @return the double
-   */
-  private double pow(double x, int pow) {
-    double p;
-    if (pow == 0) {
-      p = 1;
-    } else {
-      p = x;
-      for (int i = 1; i < pow; i++) {
-        p = p * p;
-      }
-    }
-
-    return (p);
-  }
-
-  /**
-   * Calc fit.
+   * Calculate least squares fit for the bicubic polynomial corresponding to lighting that is off axis.
    *
    * @param measures the measures
    * @return the matrix
@@ -177,7 +161,7 @@ public class BiCubic_Adjust implements PlugInFilter {
       int col = 0;
       for (int i = 0; i < 4; i++) {
         for (int j = 0; j < 4; j++) {
-          double cal = pow(x, i) * pow(y, j);
+          double cal = java.lang.Math.pow(x, i) * java.lang.Math.pow(y, j);
           xMatrix.set(k, col++, cal);
         }
       }
@@ -203,36 +187,37 @@ public class BiCubic_Adjust implements PlugInFilter {
 
     // X phsuedoinverse
     Matrix vsMatrix = vMatrix.times(sMatrix);
-    System.out.println(vsMatrix);
+    //System.out.println(vsMatrix);
     Matrix xInverseMatrix = vsMatrix.times(uMatrix.transpose());
 
     // matrix has coeffients
     Matrix coefficientMatrix = xInverseMatrix.times(yMatrix);
 
-    Matrix nYMatrix = xMatrix.times(coefficientMatrix);
+   /* Residual error matrix
+    * Matrix nYMatrix = xMatrix.times(coefficientMatrix);
+    * Matrix dYMatrix = yMatrix.minus(nYMatrix);
+    * double sum = dYMatrix.viewColumn(0).dot(dYMatrix.viewColumn(0));
+    * */
 
-    Matrix dYMatrix = yMatrix.minus(nYMatrix);
-    // double sum = ColtUtils.dotproduct(ColtUtils.getcol(dY,0),ColtUtils.getcol(dY,0));
-    double sum = dYMatrix.viewColumn(0).dot(dYMatrix.viewColumn(0));
-
+    System.out.println("Coefficient matrix " + coefficientMatrix);
     return (coefficientMatrix);
   }
 
   /**
-   * Calc.
+   * Create bicubic factors to fit via SVD
    *
-   * @param cMatrix the c
+   * @param coefficientMatrix the c
    * @param xPixel 
    * @param yPixel
    * @return bicubic value from matrix points
    */
-  private double calc(Matrix cMatrix, double xPixel, double yPixel) {
+  private double calc(Matrix coefficientMatrix, double xPixel, double yPixel) {
     double value = 0;
     int col = 0;
 
     for (int i = 0; i < 4; i++) {
       for (int j = 0; j < 4; j++) {
-        value = value + (cMatrix.get(col++, 0) * (pow(xPixel, i) * pow(yPixel, j)));
+        value = value + (coefficientMatrix.get(col++, 0) * (java.lang.Math.pow(xPixel, i) * java.lang.Math.pow(yPixel, j)));
       }
     }
 
@@ -240,7 +225,7 @@ public class BiCubic_Adjust implements PlugInFilter {
   }
 
   /**
-   * Filter.
+   * Filter interface for imageJ.
    *
    * @param pixels image pixels
    * @param rows
@@ -259,27 +244,28 @@ public class BiCubic_Adjust implements PlugInFilter {
     ArrayList<Point> minMeasures = new ArrayList<Point>();
     ArrayList<Point> meanMeasures = new ArrayList<Point>();
 
+    // x and y values for window samples
     int ys = 0;
     int xs = 0;
 
     double max = 0;
-    double min = 99999;
+    double min = Double.MAX_VALUE;
     double mean = 0.0;
 
-    for (int y = 0; y < rows - (int) sample; y = y + (int) sample) {
+    // Take samples over window size
+    for (int y = 0; y < rows - (int) window; y = y + (int) window) {
       xs = 0;
-      for (int x = 0; x < cols - (int) sample; x = x + (int) sample) {
+      for (int x = 0; x < cols - (int) window; x = x + (int) window) {
         max = 0;
-        min = 99999;
+        min = Double.MAX_VALUE;
         mean = 0.0;
 
         count = 0;
 
-        for (int yi = y; yi <= y + sample; yi++) {
-          for (int xi = x; xi <= x + sample; xi++) {
+        for (int yi = y; yi <= y + window; yi++) {
+          for (int xi = x; xi <= x + window; xi++) {
 
             int pix = pixels[xi][yi];
-
             if (max < pix) {
               max = pix;
             }
@@ -297,25 +283,19 @@ public class BiCubic_Adjust implements PlugInFilter {
 
         // put max and min at center points in sample square
         maxMeasures.add(new Point(xs, ys, max));
+        
         // maxMeasures.add(new Point(x+(sample),y+(sample),(double)max));
         minMeasures.add(new Point(xs, ys, min));
-        meanMeasures.add(new Point(xs++, ys, mean));
+        
+        meanMeasures.add(new Point(xs, ys, mean));
         // minMeasures.add(new Point(x+(sample),y+(sample),(double)min));
-
-        /***
-         * for(int yi=y; yi<=y+sample; yi++) { for(int xi=x; xi<=x+sample; xi++) {
-         * ip.putPixel(xi,yi,max); }}
-         ***/
+        
+        xs++;
       }
       ys++;
     }
 
-    /**
-     * maxMeasures.add(new Point(xs,ys,(double)max)); minMeasures.add(new Point(xs,ys,(double)min));
-     * meanMeasures.add(new Point(xs,ys,(double)mean));
-     **/
-
-
+   System.out.println("Max measures "+ maxMeasures);
     Matrix cMax = calcFit(maxMeasures);
     Matrix cMin = calcFit(minMeasures);
     Matrix cMean = calcFit(meanMeasures);
@@ -325,9 +305,10 @@ public class BiCubic_Adjust implements PlugInFilter {
     for (int y = 0; y < rows; y++) {
       for (int x = 0; x < cols; x++) {
 
-        min = calc(cMin, ((double) x) / sample, ((double) y) / sample);
-        max = calc(cMax, ((double) x) / sample, ((double) y) / sample);
-        mean = calc(cMean, ((double) x) / sample, ((double) y) / sample);
+        // Calculate point values keeping in mind samples correspond to windows not actual point values
+        min = calc(cMin, ((double) x) / window, ((double) y) / window);
+        max = calc(cMax, ((double) x) / window, ((double) y) / window);
+        mean = calc(cMean, ((double) x) / window, ((double) y) / window);
 
         // Linear strech
         // OUTVAL = (INVAL - INLO) * ((OUTUP-OUTLO)/(INUP-INLO)) + OUTLO
@@ -335,15 +316,19 @@ public class BiCubic_Adjust implements PlugInFilter {
         int pix = ip.getPixel(x, y);
         double newPix = pix;
 
-        if (pix > 85) {
+       /* if (pix > 85) {
           newPix = (pix - min) * ((255.0 - 0.0) / (max - min)) + 0.0;
-        }
+        }*/
 
-        if (newPix < 0) {
+        /*if (newPix < 0) {
           newPix = 0;
         } else if (newPix > 255) {
           newPix = 255;
-        }
+        }*/
+
+        // min max scaling
+        newPix = (pix - min)/(max - min);
+        System.out.println("min " + min + " max " + max + " pix "+ pix + " min-max " + newPix);
 
         /***
          * if ((pix < mean) && (pix-mean >= 0)) newPix = pix-min;
