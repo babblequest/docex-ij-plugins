@@ -22,10 +22,19 @@ Plugins can be found under plugins->DOCEX
 
 #Sample Images
 
+# Original Image
 ![Sample Image](data/sampleImage.jpg "Sample Page")
+
+# Off axis adjustment
 ![Off axis adjustment](data/offaxisAdjust.jpg "Sample Page")
+
+# Multiple axis adjustment
 ![Multi axis adjustment](data/multiAxisAdjust.jpg "Sample Page")
+
+# Segmentation using the Split Bregman
 ![Split Bregman segmentation](data/SplitBregman.jpg "Sample Page")
+
+# Text Image deskew
 ![Deskew](data/deskew.jpg "Sample Page")
 
 All code is freely availabile under the GNU General Public License.
