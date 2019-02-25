@@ -15,6 +15,11 @@ Recommend using the Fiji or imageJ2 of imagej as maven integration is as simple 
 
 Plugins can be found under plugins->DOCEX
 
+# Dependencies
+  * imagej
+  * mahout math (SVD)
+  * apache commons math3 (Bicubic)
+
 All code is freely availabile under the GNU General Public License.
 
 For more information email Steven Parker (parker@babblequest.org)
