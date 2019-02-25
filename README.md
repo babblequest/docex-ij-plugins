@@ -20,6 +20,14 @@ Plugins can be found under plugins->DOCEX
   * mahout math (SVD)
   * apache commons math3 (Bicubic)
 
+#Sample Images
+
+![Sample Image](data/sampleImage.jpg "Sample Page")
+![Off axis adjustment](data/offaxisAdjust.jpg "Sample Page")
+![Multi axis adjustment](data/multiAxisAdjust.jpg "Sample Page")
+![Split Bregman segmentation](data/SplitBregman.jpg "Sample Page")
+![Deskew](data/deskew.jpg "Sample Page")
+
 All code is freely availabile under the GNU General Public License.
 
 For more information email Steven Parker (parker@babblequest.org)
