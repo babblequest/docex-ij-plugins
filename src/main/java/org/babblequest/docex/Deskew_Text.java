@@ -69,7 +69,7 @@ public class Deskew_Text implements PlugInFilter {
        //http://imagej.1557.x6.nabble.com/Image-Rotations-and-quot-ip-setBackgroundValue-quot-td5021339.html#a5021340
     
     double edgeColor = 255 - getEdgeColor(ip);
-    System.out.println(edgeColor);
+    //System.out.println(edgeColor);
     //ip.subtract(edgeColor);
     ip.rotate(-1 * -57.295779513082320876798154814105 * skewRadians);
     //ip.add(edgeColor);
@@ -100,7 +100,6 @@ public class Deskew_Text implements PlugInFilter {
     
     for (int x=0;x<width;x++)
     {
-      System.out.println(pixels[x][0] + " " + pixels[x][height-1] );
       total = total + pixels[x][0] + pixels[x][height-1];
       count = count + 2.0;
     }

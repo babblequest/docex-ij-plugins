@@ -106,7 +106,6 @@ public class L2_Adjust implements PlugInFilter {
         DenseMatrix AMax = new DenseMatrix((cols/scale)+1, (rows/scale)+1);
         int edgeCount[][] = new int[cols/scale+1][rows/scale+1];
         
-        System.out.println("cols = " + cols/scale + " rows = " + rows/scale);
         for (int x=0;x<cols/scale;x++)
           for (int y=0;y<rows/scale;y++)
             AMin.set(x,y,Integer.MAX_VALUE);

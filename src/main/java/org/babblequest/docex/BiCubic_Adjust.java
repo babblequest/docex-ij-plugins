@@ -107,13 +107,6 @@ public class BiCubic_Adjust implements PlugInFilter {
     for (int i=0;i<ySamples.length;i++)
       yValues[i] = (double)ySamples[i];
     
-    for (int i=0;i<xValues.length;i++) {
-      System.out.println(xValues[i]);
-    }
-    for (int i=0;i<yValues.length;i++) {
-      System.out.println(yValues[i]);
-    }
-    
     BivariateFunction function = interpolator.interpolate(xValues, yValues,measures);
     
     return function;
@@ -128,7 +121,6 @@ public class BiCubic_Adjust implements PlugInFilter {
    * @return bicubic value from matrix points
    */
   private double calc(BivariateFunction function, double xPixel, double yPixel) {
-    //System.out.println("asking for output for point " + xPixel + "," + yPixel);
     return(function.value(xPixel,  yPixel));
   }
 
@@ -154,8 +146,6 @@ public class BiCubic_Adjust implements PlugInFilter {
     int[] xSamples = new int[(cols/window)+1];
     int[] ySamples = new int[(rows/window)+1];
     
-    System.out.println("rows " + rows + ", window " + window + " = " + ySamples.length + " samples");
-
     //define sorted list of grid points
     int yindex = 0;
     for (int y = 0; y < rows - window; y = y + window) {
@@ -167,17 +157,11 @@ public class BiCubic_Adjust implements PlugInFilter {
       System.out.println(ySamples[i]);
     }
     
-    System.out.println("cols " + cols + ", window " + window + " = " + xSamples.length + " samples");
-
     int xindex = 0;
     for (int x = 0; x < cols - window; x = x + window) {
       xSamples[xindex++] = x;
     }
     xSamples[xindex] = cols-1;
-    
-    for (int i=0;i<xSamples.length;i++) {
-        System.out.println(xSamples[i]);
-    }
     
     double maxMeasures[][] = new double[xSamples.length][ySamples.length];
     double minMeasures[][] = new double[xSamples.length][ySamples.length];
@@ -238,12 +222,9 @@ public class BiCubic_Adjust implements PlugInFilter {
       }
     }
 
-    System.out.println("Max measures "+ maxMeasures);
     BivariateFunction cMax = calcFit(xSamples, ySamples, maxMeasures);
     BivariateFunction cMin = calcFit(xSamples, ySamples, minMeasures);
     BivariateFunction cMean = calcFit(xSamples, ySamples, meanMeasures);
-
-    System.out.println(maxMeasures);
 
     double newPixels[][] = new double[pixels.length][pixels[0].length];
     for (int y = 0; y < rows; y++) {
@@ -285,12 +266,8 @@ public class BiCubic_Adjust implements PlugInFilter {
          ****/
         // double scale = (max-min)/255.0;
 
-        // ip.putPixelValue(x,y,calc(Cmax,x/150,y/150));
-        //newPixels[x][y] = newPix;
         ip.putPixelValue(x, y, newPix);
       }
     }
-    //ImageJUtils.setPixelsAsBytes(ip, newPixels);
-    //ip.setPixels(newPixels);
   }
 }

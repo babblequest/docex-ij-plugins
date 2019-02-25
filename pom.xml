@@ -34,20 +34,20 @@
 
         <mailingLists>
            <mailingList>
-               <name>FDE Forum</name>
+               <name>DOCEX Forum</name>
 	       <archive>https://babblequest.org/forum/</archive>
 	   </mailingList>
 	</mailingLists>
 
         <scm>
-		<connection>scm:git:git://github.com/babblquest/NLP</connection>
+		<connection>scm:git:git://github.com/babblquest</connection>
 		<tag>HEAD</tag>
 		<url>https://github.com/</url>
 	</scm>
 
         <issueManagement>
 		<system>GitHub Issues</system>
-		<url>https://github.com/babblquest/NLP/issues</url>
+		<url>https://github.com/babblquest/issues</url>
 	</issueManagement>
 
 	<licenses>
