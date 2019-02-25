@@ -30,6 +30,8 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBuffer;
+import java.awt.Color;
+
 
 /**********************************************
  * Text image deskew using code derived from an abandoned Gimp autodeskew plugin - i it uses GPL
@@ -39,7 +41,7 @@ import java.awt.image.DataBuffer;
 
 public class Deskew_Text implements PlugInFilter {
   private int flags = DOES_ALL | CONVERT_TO_FLOAT;
-
+  //private int flags = DOES_16 | DOES_8G;
   public int setup(String argv, ImagePlus imp) {
     if (IJ.versionLessThan("1.38x"))
     {
@@ -51,22 +53,35 @@ public class Deskew_Text implements PlugInFilter {
   public void run(ImageProcessor ip) {
     Image image = ip.createImage();
     final double skewRadians;
-    BufferedImage black = new BufferedImage(image.getWidth(null), image.getHeight(null),
+    BufferedImage white = new BufferedImage(image.getWidth(null), image.getHeight(null),
         BufferedImage.TYPE_BYTE_BINARY);
-    final Graphics2D g = black.createGraphics();
+    
+    final Graphics2D g = white.createGraphics();
+    g.setColor(Color.WHITE);
+    
     g.drawImage(image, 0, 0, null);
     g.dispose();
 
-    skewRadians = findSkew(black);
+    skewRadians = findSkew(white);
+    
+    // ip.setBackgroundValue(255.0); Does not work for all modes
+    // quick hack by Michael Schmid-3 to avoid black artifacts after rotation
+       //http://imagej.1557.x6.nabble.com/Image-Rotations-and-quot-ip-setBackgroundValue-quot-td5021339.html#a5021340
+    
+    double edgeColor = 255 - getEdgeColor(ip);
+    System.out.println(edgeColor);
+    //ip.subtract(edgeColor);
     ip.rotate(-1 * -57.295779513082320876798154814105 * skewRadians);
+    //ip.add(edgeColor);
+    ip.convertToShort(true);
     // System.out.println(-57.295779513082320876798154814105 * skewRadians);
   }
 
-  static int getByteWidth(final int width) {
+  int getByteWidth(final int width) {
     return (width + 7) / 8;
   }
 
-  static int next_pow2(final int n) {
+  int next_pow2(final int n) {
     int retval = 1;
     while (retval < n) {
       retval <<= 1;
@@ -74,11 +89,29 @@ public class Deskew_Text implements PlugInFilter {
     return retval;
   }
 
+  double getEdgeColor(ImageProcessor ip)
+  {
+    float pixels[][] = ip.getFloatArray();
+    int height = ip.getHeight();
+    int width = ip.getWidth();
+    
+    double total = 0.0;
+    double count = 0.0;
+    
+    for (int x=0;x<width;x++)
+    {
+      System.out.println(pixels[x][0] + " " + pixels[x][height-1] );
+      total = total + pixels[x][0] + pixels[x][height-1];
+      count = count + 2.0;
+    }
+    return((total/count));
+  }
+  
   static class BitUtils {
-    static int[] bitcount = new int[256];
-    static int[] invbits_ = new int[256];
+     static int[] bitcount = new int[256];
+     static int[] invbits_ = new int[256];
 
-    static {
+     static {
       for (int i = 0; i < 256; i++) {
         int j = i;
         int cnt = 0;
@@ -94,7 +127,7 @@ public class Deskew_Text implements PlugInFilter {
     }
   }
 
-  static double findSkew(final BufferedImage img) {
+  double findSkew(final BufferedImage img) {
     final DataBuffer buffer = img.getRaster().getDataBuffer();
     final int byteWidth = getByteWidth(img.getWidth());
     final int padmask = 0xFF << ((img.getWidth() + 7) % 8);
@@ -135,7 +168,7 @@ public class Deskew_Text implements PlugInFilter {
     return Math.atan(iskew / (8 * w2));
   }
 
-  static void radon(final int width, final int height, final DataBuffer buffer, final int sign,
+  void radon(final int width, final int height, final DataBuffer buffer, final int sign,
       final int[] sharpness) {
 
     int[] p1;

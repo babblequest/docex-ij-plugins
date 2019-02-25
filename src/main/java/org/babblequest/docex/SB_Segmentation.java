@@ -23,6 +23,7 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
+import ij.plugin.CanvasResizer;
 
 /*
  * sbseg.c by Tom Goldstein This code performs isotropic segmentation using the "Split Bregman"
@@ -40,7 +41,7 @@ import ij.process.ImageProcessor;
 
 public class SB_Segmentation implements PlugInFilter {
 
-  private int flags = DOES_ALL;
+  private int flags = DOES_8G;
   int GX[][] = {{-1, 0, 1}, {-2, 0, 2}, {-1, 0, 1}};
 
   /* 3x3 GY Sobel mask. Ref: www.cee.hw.ac.uk/hipr/html/sobel.html */
@@ -53,36 +54,49 @@ public class SB_Segmentation implements PlugInFilter {
   }
 
   public void run(ImageProcessor ip) {
-    int pixels[][] = ip.getIntArray();
+    
     int cols = ip.getWidth();
     int rows = ip.getHeight();
 
-    double[][] f = newMatrixseg(rows, cols);
+    CanvasResizer resizer = new CanvasResizer();
+    ip.setBackgroundValue(255.0);
+    ImageProcessor extendedIp = resizer.expandImage(ip,cols+100, rows+100,50,50);
 
-    for (int r = 0; r < rows; r++)
-      for (int c = 0; c < cols; c++) {
+    int pixels[][] = extendedIp.getIntArray();
+    int excols = extendedIp.getWidth();
+    int exrows = extendedIp.getHeight();
+    
+    double[][] f = newMatrixseg(exrows, excols);
+
+    for (int r = 0; r < exrows; r++)
+      for (int c = 0; c < excols; c++) {
         double val = (double) pixels[c][r];
+        
+        //if (r<50) val = 150.0;
+        //if (c<50) val = 150.0;
+        //if (r>rows+50) val = 150.0;
+        //if (c>cols+50) val = 150.0;
         f[r][c] = val;
       }
 
     double[][] edges = newMatrixseg(rows, cols);
-    edges = getEdges(pixels, cols, rows);
+    edges = getEdges(pixels, excols, exrows);
 
-    for (int r = 0; r < rows; r++)
-      for (int c = 0; c < cols; c++) {
+    for (int r = 0; r < exrows; r++)
+      for (int c = 0; c < excols; c++) {
         edges[r][c] = 1.0;
         // edges[r][c] = 1.0 - edges[r][c];
       }
 
-    double[][] u = segment(f, edges, rows, cols);
+    double[][] u = segment(f, edges, exrows, excols);
 
     /* copy denoised image to output vector */
-    for (int r = 0; r < rows; r++)
-      for (int c = 0; c < cols; c++) {
+    for (int r = 50; r < exrows-50; r++)
+      for (int c = 50; c < excols-50; c++) {
         if (u[r][c] > 0.5)
-          ip.setf(c, r, (float) 255.0);
+          ip.setf(c-50, r-50, (float) 255.0);
         else
-          ip.setf(c, r, (float) 0.0);
+          ip.setf(c-50, r-50, (float) 0.0);
         // ip.setf(c,r,(float)u[r][c]); // u is the denoised image
       }
 
