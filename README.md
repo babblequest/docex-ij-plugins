@@ -4,7 +4,7 @@
 
 # Image processing tasks for document exploitation
 
-* Page Alignment (Radno Transform)
+* Page Alignment (Radon Transform)
 * Lighting Correction
    * Off axis lighting (Bicubic)
    * Folds and multiple light sources (L2)
